@@ -1,0 +1,48 @@
+name: CI/CD Pipeline  # Name shown in GitHub Actions tab
+
+on:
+  push:
+    branches: [ master ]  # Trigger on pushes to master
+
+jobs:
+  test:  # CI: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13.7'  # Matches your Arch Linux Python version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Assumes you have requirements.txt
+
+      - name: Run Django migrations (for test DB)
+        run: |
+          python manage.py migrate
+
+      - name: Run tests
+        run: |
+          python manage.py test  # Runs your tests from events/tests.py
+        env:
+          SECRET_KEY: django-insecure-testing-key  # Temp key for tests
+          DEBUG: True
+
+  deploy:  # CD: Deploy to Render if tests pass
+    needs: test  # Only run if 'test' job succeeds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8  # Reliable action from Marketplace
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          wait-for-success: true  # Waits for deploy to finish (up to 10-15 min on free tier)
+          clear-cache: false  # Optional: Set to true if you want to bust build cache
