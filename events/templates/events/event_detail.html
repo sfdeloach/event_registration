@@ -1,0 +1,10 @@
+{% extends 'events/base.html' %}
+{% block content %}
+<h1>{{ event.title }}</h1>
+<p>{{ event.description }}</p>
+<p>Date: {{ event.date }}</p>
+<p>Organizer: {{ event.organizer.username }}</p>
+{% if user.is_authenticated %}
+<a href="{% url 'event_register' event.pk %}">Register for Event</a>
+{% endif %}
+{% endblock %}
