@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("events.urls")),
-    path("accounts/", include("django.contrib.auth.urls")),  # Built-in auth URLs
+    path('admin/', admin.site.urls),  # Admin interface
+    path('', include('events.urls')),  # Delegate to events app for root URLs
+    path('accounts/', include('django.contrib.auth.urls')),  # Built-in auth URLs (login, logout, etc.)
 ]

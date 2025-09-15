@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.utils import timezone
 from .models import Event, Registration
 from .forms import EventForm, RegistrationForm
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 
 
 def event_list(request):
